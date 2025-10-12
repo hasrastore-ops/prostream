@@ -18,43 +18,47 @@
 
       ttq.load('D3LMA63C77U816ERRPPG');
       ttq.page();
-      
-      // Function to track Purchase
-      function trackPurchase(amount) {
-        ttq.track('Purchase', {
-          "contents": [
-            {
-              "content_id": "prostream_4app_package",
-              "content_type": "product",
-              "content_name": "PROSTREAM 4 App Power Package"
-            }
-          ],
-          "value": amount,
-          "currency": "MYR"
-        });
-      }
-      
-      // SHA-256 hashing function for PII data
-      async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-      }
-      
-      // Function to identify user with hashed PII
-      async function identifyUser(email, phone) {
-        const hashedEmail = await sha256(email.toLowerCase());
-        const hashedPhone = await sha256(phone);
-        
-        ttq.identify({
-          "email": hashedEmail,
-          "phone_number": hashedPhone,
-          "external_id": await sha256(email) // Using email as external ID
-        });
-      }
     }(window, document, 'ttq');
+
+    // --- GLOBAL TIKTOK TRACKING FUNCTIONS ---
+    // These functions are now in the global scope and can be called from anywhere.
+
+    function trackPurchase(amount) {
+      console.log('TikTok: Firing Purchase event with amount:', amount);
+      ttq.track('Purchase', {
+        "contents": [
+          {
+            "content_id": "prostream_4app_package",
+            "content_type": "product",
+            "content_name": "PROSTREAM 4 App Power Package"
+          }
+        ],
+        "value": amount,
+        "currency": "MYR"
+      });
+    }
+    
+    // SHA-256 hashing function for PII data
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+    
+    // Function to identify user with hashed PII
+    async function identifyUser(email, phone) {
+      console.log('TikTok: Identifying user with PII');
+      const hashedEmail = await sha256(email.toLowerCase());
+      const hashedPhone = await sha256(phone);
+      
+      ttq.identify({
+        "email": hashedEmail,
+        "phone_number": hashedPhone,
+        "external_id": await sha256(email) // Using email as external ID
+      });
+    }
     </script>
     <!-- TikTok Pixel Code End -->
     
@@ -411,55 +415,24 @@
 
         // Function to send Discord notification
         async function sendDiscordNotification(orderData) {
+            console.log('Attempting to send Discord notification for:', orderData);
             try {
                 const timestamp = new Date().toISOString();
                 
-                // Create embed for Discord message
                 const embed = {
                     title: "✅ PEMBAYARAN BERJAYA - PROSTREAM",
                     description: "Pelanggan telah berjaya membuat pembayaran!",
-                    color: 0x43b581, // Green color for success
+                    color: 0x43b581,
                     fields: [
-                        {
-                            name: "📋 Status Pembayaran",
-                            value: "Berjaya",
-                            inline: true
-                        },
-                        {
-                            name: "👤 Nama",
-                            value: orderData.customerName,
-                            inline: true
-                        },
-                        {
-                            name: "📱 No Telefon",
-                            value: orderData.customerPhone,
-                            inline: true
-                        },
-                        {
-                            name: "📧 Email",
-                            value: orderData.customerEmail,
-                            inline: false
-                        },
-                        {
-                            name: "📦 Produk",
-                            value: orderData.product,
-                            inline: true
-                        },
-                        {
-                            name: "💰 Jumlah",
-                            value: `RM ${orderData.total.toFixed(2)}`,
-                            inline: true
-                        },
-                        {
-                            name: "🕐 Tarikh & Masa",
-                            value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
-                            inline: false
-                        }
+                        { name: "📋 Status Pembayaran", value: "Berjaya", inline: true },
+                        { name: "👤 Nama", value: orderData.customerName, inline: true },
+                        { name: "📱 No Telefon", value: orderData.customerPhone, inline: true },
+                        { name: "📧 Email", value: orderData.customerEmail, inline: false },
+                        { name: "📦 Produk", value: orderData.product, inline: true },
+                        { name: "💰 Jumlah", value: `RM ${orderData.total.toFixed(2)}`, inline: true },
+                        { name: "🕐 Tarikh & Masa", value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false }
                     ],
-                    footer: {
-                        text: "PROSTREAM - Streaming Apps Package",
-                        icon_url: "https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
-                    },
+                    footer: { text: "PROSTREAM - Streaming Apps Package", icon_url: "https://cdn-icons-png.flaticon.com/512/2991/2991148.png" },
                     timestamp: timestamp
                 };
 
@@ -471,22 +444,20 @@
 
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
-                    console.log('Discord notification sent successfully');
+                    console.log('✅ Discord notification sent successfully');
                     return true;
                 } else {
                     const errorText = await response.text();
-                    console.error('Failed to send Discord notification:', errorText);
+                    console.error('❌ Failed to send Discord notification:', errorText);
                     return false;
                 }
             } catch (error) {
-                console.error('Error sending Discord notification:', error);
+                console.error('❌ Error sending Discord notification:', error);
                 return false;
             }
         }
@@ -515,29 +486,39 @@
 
         // Function to load order details
         async function loadOrderDetails() {
+            console.log('🔄 Loading order details...');
             try {
                 const pendingOrder = localStorage.getItem('pendingOrder');
+                console.log('Retrieved pendingOrder from localStorage:', pendingOrder);
+
                 if (!pendingOrder) {
+                    console.error('❌ No pending order found in localStorage.');
                     showOrderDetailsError();
                     return;
                 }
 
                 const orderData = JSON.parse(pendingOrder);
+                console.log('✅ Parsed order data:', orderData);
+                
                 displayOrderDetails(orderData);
                 
                 // Identify user with hashed PII
+                console.log('Identifying user for TikTok...');
                 await identifyUser(orderData.orderData.customerEmail, orderData.orderData.customerPhone);
                 
                 // Track Purchase
+                console.log('Firing TikTok Purchase event...');
                 trackPurchase(orderData.totalAmount);
                 
                 // Send Discord notification for successful payment
-                sendDiscordNotification(orderData.orderData);
+                console.log('Sending Discord notification...');
+                await sendDiscordNotification(orderData.orderData);
                 
                 // Clear the pending order from localStorage
                 localStorage.removeItem('pendingOrder');
+                console.log('✅ Cleared pendingOrder from localStorage.');
             } catch (error) {
-                console.error('Error loading order details:', error);
+                console.error('❌ Error in loadOrderDetails:', error);
                 showOrderDetailsError();
             }
         }
@@ -585,18 +566,6 @@
                 <p style="text-align: center;">Sila hubungi sokongan pelanggan kami untuk bantuan.</p>
             `;
         }
-
-        // Download guide button handler
-        document.getElementById('downloadGuideBtn')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            showNotification('Panduan sedang dimuat turun...', 'success');
-            
-            // In a real implementation, this would trigger a download
-            // For now, we'll just show a notification
-            setTimeout(() => {
-                showNotification('Panduan akan dihantar ke emel anda', 'success');
-            }, 1500);
-        });
 
         // Load order details when page loads
         document.addEventListener('DOMContentLoaded', loadOrderDetails);
