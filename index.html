@@ -17,7 +17,72 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
   ttq.load('D3LMA63C77U816ERRPPG');
   ttq.page();
+  
+  // Track ViewContent on initial page load
+  ttq.track('ViewContent', {
+    "contents": [
+      {
+        "content_id": "prostream_4app_package",
+        "content_type": "product",
+        "content_name": "PROSTREAM 4 App Power Package"
+      }
+    ],
+    "value": 19.90,
+    "currency": "MYR"
+  });
 }(window, document, 'ttq');
+
+// --- GLOBAL TIKTOK TRACKING FUNCTIONS ---
+// These functions are now in the global scope and can be called from anywhere.
+
+function trackAddToCart(price) {
+  ttq.track('AddToCart', {
+    "contents": [
+      {
+        "content_id": "prostream_4app_package",
+        "content_type": "product",
+        "content_name": "PROSTREAM 4 App Power Package"
+      }
+    ],
+    "value": price,
+    "currency": "MYR"
+  });
+}
+
+function trackInitiateCheckout(price) {
+  ttq.track('InitiateCheckout', {
+    "contents": [
+      {
+        "content_id": "prostream_4app_package",
+        "content_type": "product",
+        "content_name": "PROSTREAM 4 App Power Package"
+      }
+    ],
+    "value": price,
+    "currency": "MYR"
+  });
+}
+
+// SHA-256 hashing function for PII data
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
+// Function to identify user with hashed PII
+async function identifyUser(email, phone) {
+  const hashedEmail = await sha256(email.toLowerCase());
+  const hashedPhone = await sha256(phone);
+  
+  ttq.identify({
+    "email": hashedEmail,
+    "phone_number": hashedPhone,
+    "external_id": await sha256(email) // Using email as external ID
+  });
+}
 </script>
 <!-- TikTok Pixel Code End -->
     <style>
@@ -667,7 +732,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 <div class="final-price">RM 19.90</div>
                 <p>SEKALI SAHAJA!</p>
                 <p class="urgency">⚠️ Harga ni akan naik bila-bila masa sahaja.ini harga pengenalan sahaja. Jangan lepaskan peluang keemasan ni!</p>
-                <a href="#package-selection" class="btn">🚀 YES! SAYA NAK SEMUANYA DENGAN RM 19.90! 🚀</a>
+                <a href="#package-selection" class="btn" id="pricing-cta">🚀 YES! SAYA NAK SEMUANYA DENGAN RM 19.90! 🚀</a>
                 <p style="margin-top: 1rem;">🔒 Pembayaran Anda 100% Selamat & Dienkripsi</p>
             </div>
         </section>
@@ -926,8 +991,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         const TOYYIBPAY_CONFIG = {
             userSecretKey: 'b2kcp05o-b5m0-q000-55i7-w3j57riufv7h',
             categoryCode: '8f5ynfpt',
-            returnUrl: 'https://prostream.vercel.app/payment-successful.html', // Updated to point to your success page
-            callbackUrl: 'https://prostream.vercel.app/payment-callback.html' // This would handle server-side payment verification
+            returnUrl: 'https://prostream-rho.vercel.app/payment-successful.html', // Updated to point to your success page
+            callbackUrl: 'https://prostream-rho.vercel.app/payment-callback.html' // This would handle server-side payment verification
         };
 
         // --- App Preview Carousel Logic ---
@@ -973,7 +1038,19 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 packageOptions.forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
                 this.querySelector('input[type="radio"]').checked = true;
+                
+                // Track AddToCart when package is selected
+                const price = parseFloat(this.querySelector('input[type="radio"]').value);
+                trackAddToCart(price);
             });
+        });
+
+        // Add event listener to the "YES! SAYA NAK SEMUANYA DENGAN RM 19.90!" button
+        document.getElementById('pricing-cta').addEventListener('click', function(e) {
+            e.preventDefault();
+            trackAddToCart(19.90);
+            // Scroll to package selection
+            document.getElementById('package-selection').scrollIntoView({ behavior: 'smooth' });
         });
 
         // ====================================
@@ -1148,6 +1225,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 return;
             }
             
+            // Track InitiateCheckout
+            trackInitiateCheckout(parseFloat(selectedPackage));
+            
+            // Identify user with hashed PII
+            identifyUser(email, phone);
+            
             // Show loading spinner
             showPaymentLoading();
             
@@ -1209,21 +1292,22 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
         // Array of 15 two-word Malay names
         const malayNames = [
-            'Ahmad Alias',
-            'Muhammad Faris',
-            'Abdul Rahman',
-            'Mohd Azhar',
-            'Nur Aisyah',
-            'Siti Nurhaliza',
-            'Fatimah Zahra',
-            'Sarah Ismail',
-            'Ainul Mardhiah',
-            'Maya Karin',
-            'Sofia Jane',
-            'Nadia Khan',
-            'Hana Tajima',
-            'Amira Salleh',
-            'Zara Zya'
+            'Ahmad Firdaus',
+'Muhammad Hafiz',
+'Abdul Hadi',
+'Mohd Faizal',
+'Nur Aina',
+'Siti Aisyah',
+'Fatimah Nadia',
+'Sarah Azizah',
+'Ainul Sofea',
+'Maya Amira',
+'Sofia Imani',
+'Nadia Farhana',
+'Hana Zulaikha',
+'Amira Natasya',
+'Zara Hani'
+
         ];
 
         // Time variations with hours and minutes
@@ -1319,5 +1403,4 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     </script>
 
 </body>
-
 </html>
