@@ -318,6 +318,239 @@ async function identifyUser(email, phone) {
             margin-top: 1.5rem;
         }
 
+        /* Exclusive Gallery Section Styles */
+        .exclusive-gallery {
+            padding: 60px 0;
+            background-color: var(--bg-color);
+        }
+
+        .gallery-categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            transform: translateY(-2px);
+        }
+
+        .gallery-container {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .overlay-content {
+            color: white;
+            width: 100%;
+        }
+
+        .overlay-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .overlay-content p {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .view-btn {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .view-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background-color: var(--surface-color);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gallery-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: var(--primary-color);
+            width: 25px;
+            border-radius: 5px;
+        }
+
+        /* Enhanced Lightbox for Gallery */
+        .gallery-lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gallery-lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .lightbox-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .lightbox-nav.prev {
+            left: -70px;
+        }
+
+        .lightbox-nav.next {
+            right: -70px;
+        }
+
         /* Checkout Form Section */
         .checkout-form-section {
             background-color: var(--bg-color);
@@ -607,10 +840,85 @@ async function identifyUser(email, phone) {
             h1 { font-size: 3.5rem; }
             h2 { font-size: 2.5rem; }
             .apps-grid { grid-template-columns: 1fr 1fr; }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         @media (min-width: 1024px) {
             .apps-grid { grid-template-columns: repeat(4, 1fr); }
             .app-card { text-align: center; }
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .gallery-categories {
+                gap: 8px;
+            }
+            
+            .category-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .gallery-item {
+                aspect-ratio: 16/9;
+            }
+            
+            .overlay-content h3 {
+                font-size: 1rem;
+            }
+            
+            .overlay-content p {
+                font-size: 0.85rem;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .lightbox-nav.prev {
+                left: 10px;
+            }
+            
+            .lightbox-nav.next {
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-categories {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .gallery-categories::-webkit-scrollbar {
+                height: 4px;
+            }
+            
+            .gallery-categories::-webkit-scrollbar-track {
+                background: var(--surface-color);
+            }
+            
+            .gallery-categories::-webkit-scrollbar-thumb {
+                background: var(--primary-color);
+                border-radius: 2px;
+            }
         }
     </style>
 </head>
@@ -718,6 +1026,166 @@ async function identifyUser(email, phone) {
                         <img class="thumbnail" src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps14.webp?text=14" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps14.webp?text=App+Screen+14" alt="Screenshot 14">
                     </div>
                     <p>*Sila slide ke kanan untuk tengok semua gambar dan tekan untuk zoom</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXCLUSIVE GALLERY SECTION -->
+        <section id="exclusive-gallery" class="exclusive-gallery">
+            <div class="container">
+                <h2>Paparan Eksklusif Aplikasi PROSTREAM</h2>
+                <p class="section-subtitle">Lihat sendiri kualiti premium yang kami tawarkan, Dan banyak lagi di dalam APPS</p>
+                
+                <div class="gallery-categories">
+                    <button class="category-btn active" data-category="all">Semua</button>
+                    <button class="category-btn" data-category="movies">Filem</button>
+                    <button class="category-btn" data-category="tv">TV Shows</button>
+                    <button class="category-btn" data-category="anime">Anime</button>
+                    <button class="category-btn" data-category="live">Live TV</button>
+                </div>
+                
+                <div class="gallery-container">
+                    <div class="gallery-grid">
+                        <div class="gallery-item" data-category="movies">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Koleksi Filem Terkini</h3>
+                                    <p>Filem blockbuster & pawagam</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps1.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps1.webp" alt="Filem Terkini">
+                        </div>
+                        <div class="gallery-item" data-category="movies">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Koleksi Filem Terkini</h3>
+                                    <p>Filem blockbuster & pawagam</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps3.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps3.webp" alt="Filem Terkini">
+                        </div>
+
+                        <div class="gallery-item" data-category="tv">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Drama & Siri Popular</h3>
+                                    <p>Koleksi drama terkini</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps2.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps2.webp" alt="Drama Popular">
+                        </div>
+
+                        <div class="gallery-item" data-category="anime">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Anime Terkini</h3>
+                                    <p>Update ikut Jepun</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps6.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps6.webp" alt="Anime Terkini">
+                        </div>
+
+                        <div class="gallery-item" data-category="movies">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Koleksi Filem Terkini</h3>
+                                    <p>Filem blockbuster & pawagam</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps9.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps9.webp" alt="Filem Terkini">
+                        </div>
+                        <div class="gallery-item" data-category="movies">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Koleksi Filem Terkini</h3>
+                                    <p>Filem blockbuster & pawagam</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps14.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps14.webp" alt="Filem Terkini">
+                        </div>
+                        <div class="gallery-item" data-category="anime">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Anime Terkini</h3>
+                                    <p>Update ikut Jepun</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps5.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps5.webp" alt="Anime Terkini">
+                        </div>
+
+                        <div class="gallery-item" data-category="tv">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Drama & Siri Popular</h3>
+                                    <p>Koleksi drama terkini</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps4.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps4.webp" alt="Drama Popular">
+                        </div>
+                        
+                        <div class="gallery-item" data-category="tv">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Drama & Siri Popular</h3>
+                                    <p>Koleksi drama terkini</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps13.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps13.webp" alt="Drama Popular">
+                        </div>
+
+                        <div class="gallery-item" data-category="tv">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Drama & Siri Popular</h3>
+                                    <p>Koleksi drama terkini</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps9.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps9.webp" alt="Drama Popular">
+                        </div>
+                        
+                        <div class="gallery-item" data-category="anime">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Anime Terkini</h3>
+                                    <p>Update ikut Jepun</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps11.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps11.webp" alt="Anime Terkini">
+                        </div>
+                        
+                        <div class="gallery-item" data-category="live">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Live TV Channels</h3>
+                                    <p>Channel Astro & Sports</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps2.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps2.webp" alt="Live TV">
+                        </div>
+                        
+                        <div class="gallery-item" data-category="live">
+                            <div class="gallery-overlay">
+                                <div class="overlay-content">
+                                    <h3>Subtitle Lengkap</h3>
+                                    <p>Bahasa Melayu & English</p>
+                                    <button class="view-btn" data-src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps8.webp">Lihat</button>
+                                </div>
+                            </div>
+                            <img src="https://cdn.jsdelivr.net/gh/hasrastore-ops/prostreammedia@v1.0/ps8.webp" alt="Subtitle Lengkap">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -897,6 +1365,54 @@ async function identifyUser(email, phone) {
         </div>
     </div>
 
+    <!-- ==================== START: WHATSAPP BUTTON ==================== -->
+    <style>
+        /* WhatsApp Button Container - Left Side */
+        .whatsapp-button-left {
+            position: fixed;        /* Fixes the button to the viewport */
+            left: 20px;             /* Position on the LEFT */
+            bottom: 20px;           /* Distance from the bottom */
+            display: flex;          /* Aligns icon and text side-by-side */
+            align-items: center;    /* Vertically centers items */
+            justify-content: center; /* Horizontally centers items */
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            width: 60px;            /* Fixed width for a circle */
+            height: 60px;           /* Fixed height for a circle */
+            border-radius: 50%;     /* Makes the button a perfect circle */
+            box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.2);
+            text-decoration: none;  /* Removes underline from link */
+            z-index: 1000;          /* Ensures the button stays on top of other content */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover */
+        }
+
+        /* WhatsApp Icon */
+        .whatsapp-button-left svg {
+            width: 35px;            /* Icon size */
+            height: 35px;           /* Icon size */
+            fill: white;            /* Makes the SVG icon white */
+        }
+
+        /* Hover Effect */
+        .whatsapp-button-left:hover {
+            transform: scale(1.1);  /* Slightly enlarges the button on hover */
+            box-shadow: 3px 4px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+
+    <a 
+      href="https://wa.me/601127412402?text=Hi%2C%20saya%20nak%20order%20pakej%20prostream%20ni.%20tapi%20ada%20soalan%2C%3A%20" 
+      class="whatsapp-button-left" 
+      target="_blank" 
+      rel="noopener noreferrer">
+      
+      <!-- WhatsApp Icon (SVG) -->
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+    </a>
+    <!-- ==================== END: WHATSAPP BUTTON ==================== -->
+
     <script>
         // ====================================
         //      DISCORD NOTIFICATION
@@ -1051,6 +1567,125 @@ async function identifyUser(email, phone) {
             trackAddToCart(19.90);
             // Scroll to package selection
             document.getElementById('package-selection').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ====================================
+        //      GALLERY FUNCTIONALITY
+        // ====================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category Filter
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter items
+                    const category = this.dataset.category;
+                    galleryItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Gallery Lightbox
+            const viewBtns = document.querySelectorAll('.view-btn');
+            const lightbox = document.createElement('div');
+            lightbox.className = 'gallery-lightbox';
+            lightbox.innerHTML = `
+                <div class="lightbox-content">
+                    <button class="lightbox-close">&times;</button>
+                    <button class="lightbox-nav prev">‹</button>
+                    <button class="lightbox-nav next">›</button>
+                    <img src="" alt="">
+                </div>
+            `;
+            document.body.appendChild(lightbox);
+            
+            const lightboxImg = lightbox.querySelector('img');
+            const lightboxClose = lightbox.querySelector('.lightbox-close');
+            const lightboxPrev = lightbox.querySelector('.lightbox-nav.prev');
+            const lightboxNext = lightbox.querySelector('.lightbox-nav.next');
+            
+            let currentImageIndex = 0;
+            let visibleImages = [];
+            
+            function updateVisibleImages() {
+                visibleImages = Array.from(galleryItems).filter(item => 
+                    item.style.display !== 'none'
+                );
+            }
+            
+            viewBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    updateVisibleImages();
+                    currentImageIndex = visibleImages.indexOf(this.closest('.gallery-item'));
+                    const imgSrc = this.dataset.src;
+                    lightboxImg.src = imgSrc;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            function showImage(index) {
+                if (index < 0) index = visibleImages.length - 1;
+                if (index >= visibleImages.length) index = 0;
+                
+                currentImageIndex = index;
+                const item = visibleImages[index];
+                const imgSrc = item.querySelector('img').src;
+                lightboxImg.src = imgSrc;
+            }
+            
+            lightboxClose.addEventListener('click', function() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            lightboxPrev.addEventListener('click', function() {
+                showImage(currentImageIndex - 1);
+            });
+            
+            lightboxNext.addEventListener('click', function() {
+                showImage(currentImageIndex + 1);
+            });
+            
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Touch gestures for mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            lightbox.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            lightbox.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    showImage(currentImageIndex + 1);
+                }
+                if (touchEndX > touchStartX + 50) {
+                    showImage(currentImageIndex - 1);
+                }
+            }
         });
 
         // ====================================
@@ -1293,21 +1928,20 @@ async function identifyUser(email, phone) {
         // Array of 15 two-word Malay names
         const malayNames = [
             'Ahmad Firdaus',
-'Muhammad Hafiz',
-'Abdul Hadi',
-'Mohd Faizal',
-'Nur Aina',
-'Siti Aisyah',
-'Fatimah Nadia',
-'Sarah Azizah',
-'Ainul Sofea',
-'Maya Amira',
-'Sofia Imani',
-'Nadia Farhana',
-'Hana Zulaikha',
-'Amira Natasya',
-'Zara Hani'
-
+            'Muhammad Hafiz',
+            'Abdul Hadi',
+            'Mohd Faizal',
+            'Nur Aina',
+            'Siti Aisyah',
+            'Fatimah Nadia',
+            'Sarah Azizah',
+            'Ainul Sofea',
+            'Maya Amira',
+            'Sofia Imani',
+            'Nadia Farhana',
+            'Hana Zulaikha',
+            'Amira Natasya',
+            'Zara Hani'
         ];
 
         // Time variations with hours and minutes
@@ -1404,4 +2038,3 @@ async function identifyUser(email, phone) {
 
 </body>
 </html>
-
