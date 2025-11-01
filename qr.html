@@ -675,10 +675,6 @@
             document.getElementById('display-amount').textContent = orderData.amount || '';
             document.getElementById('amount-verification').textContent = orderData.amount || '';
 
-            // Generate QR code
-            const qrData = `bank:payment?amount=${orderData.amount}&name=${orderData.name}&phone=${orderData.phone}`;
-            document.getElementById('qr-code-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
-
             // Current step
             let currentStep = 1;
             const totalSteps = 5;
