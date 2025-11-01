@@ -37,7 +37,6 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            /* Prevent pull-to-refresh on mobile */
             overscroll-behavior: contain;
         }
 
@@ -60,7 +59,7 @@
         main {
             flex: 1;
             padding: var(--mobile-padding);
-            padding-bottom: 80px; /* Extra space for mobile keyboards */
+            padding-bottom: 80px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -229,7 +228,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Add download icon */
         .download-btn::before {
             content: '⬇';
             margin-right: 8px;
@@ -312,7 +310,6 @@
             margin: 5px;
             min-height: var(--mobile-button-height);
             width: 100%;
-            /* Ensure button is large enough for touch */
             touch-action: manipulation;
         }
 
@@ -416,7 +413,6 @@
             max-width: 80%;
         }
 
-        /* Mobile-specific adjustments */
         @media (max-width: 480px) {
             .payment-container {
                 padding: 15px;
@@ -442,7 +438,6 @@
             }
         }
 
-        /* Fix for iOS Safari */
         @supports (-webkit-touch-callout: none) {
             .btn {
                 -webkit-appearance: none;
@@ -451,7 +446,6 @@
             }
         }
 
-        /* Fix for Android Chrome */
         @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
             .btn {
                 -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -580,14 +574,12 @@
 
         // Function to get order data from URL parameters or local storage
         function getOrderData() {
-            // First, try to get data from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const name = urlParams.get('name');
             const email = urlParams.get('email');
             const phone = urlParams.get('phone');
             const amount = urlParams.get('amount');
             
-            // If all URL parameters exist, use them and save to local storage
             if (name && email && phone && amount) {
                 const orderData = {
                     name: name,
@@ -601,13 +593,11 @@
                 return orderData;
             }
             
-            // If URL parameters are missing, try to get from local storage
             const savedData = localStorage.getItem('prostreamQRPaymentData');
             if (savedData) {
                 try {
                     const orderData = JSON.parse(savedData);
                     
-                    // Only use if data is less than 24 hours old
                     const savedTime = new Date(orderData.timestamp);
                     const currentTime = new Date();
                     const timeDiff = currentTime - savedTime;
@@ -621,7 +611,6 @@
                 }
             }
             
-            // If no valid data found, redirect to index.html
             showNotification('Maklumat pesanan tidak dijumpai. Sila isi borang pesanan semula.', 'error');
             setTimeout(() => {
                 window.location.href = 'index.html';
@@ -630,7 +619,6 @@
             return null;
         }
 
-        // Show notification
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
@@ -642,50 +630,38 @@
             }, 3000);
         }
 
-        // Show loading overlay
         function showLoading() {
             document.getElementById('loading-overlay').classList.add('active');
-            // Prevent scrolling when loading
             document.body.style.overflow = 'hidden';
         }
 
-        // Hide loading overlay
         function hideLoading() {
             document.getElementById('loading-overlay').classList.remove('active');
-            // Re-enable scrolling
             document.body.style.overflow = '';
         }
 
-        // Initialize the page when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            // Get order data
             const orderData = getOrderData();
             
-            // If no order data, the function will redirect to index.html
             if (!orderData) {
-                // Exit early to prevent errors
                 document.body.innerHTML = '<div style="padding: 20px; text-align: center;"><h2>Mengalihkan ke halaman pesanan...</h2></div>';
                 return;
             }
 
-            // Display user details
             document.getElementById('display-name').textContent = orderData.name || '';
             document.getElementById('display-email').textContent = orderData.email || '';
             document.getElementById('display-phone').textContent = orderData.phone || '';
             document.getElementById('display-amount').textContent = orderData.amount || '';
             document.getElementById('amount-verification').textContent = orderData.amount || '';
 
-            // Current step
             let currentStep = 1;
             const totalSteps = 5;
 
-            // Update progress bar
             function updateProgress() {
                 const progress = document.getElementById('progress');
                 const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
                 progress.style.width = `${progressPercentage}%`;
 
-                // Update step indicators
                 for (let i = 1; i <= totalSteps; i++) {
                     const indicator = document.getElementById(`step-${i}-indicator`);
                     if (i < currentStep) {
@@ -700,26 +676,20 @@
                 }
             }
 
-            // Show step
             function showStep(step) {
-                // Hide all steps
                 document.querySelectorAll('.instruction-step').forEach(el => {
                     el.classList.remove('active');
                 });
 
-                // Show current step
                 document.getElementById(`step-${step}`).classList.add('active');
                 currentStep = step;
                 updateProgress();
                 
-                // Save current step to local storage
                 localStorage.setItem('prostreamQRPaymentStep', step.toString());
                 
-                // Scroll to top of container
                 document.querySelector('.payment-container').scrollIntoView({ behavior: 'smooth' });
             }
 
-            // Restore last step from local storage
             function restoreLastStep() {
                 const savedStep = localStorage.getItem('prostreamQRPaymentStep');
                 if (savedStep) {
@@ -731,119 +701,96 @@
                     }
                 }
                 
-                // Default to step 1
                 showStep(1);
             }
 
-            // Step 1: Next button
             const step1NextBtn = document.getElementById('step-1-next');
             if (step1NextBtn) {
                 step1NextBtn.addEventListener('click', () => {
-                    console.log('Step 1 next clicked');
                     showStep(2);
                 });
             }
 
-            // Step 2: Previous and Next buttons
             const step2PrevBtn = document.getElementById('step-2-prev');
             const step2NextBtn = document.getElementById('step-2-next');
             
             if (step2PrevBtn) {
                 step2PrevBtn.addEventListener('click', () => {
-                    console.log('Step 2 prev clicked');
                     showStep(1);
                 });
             }
             
             if (step2NextBtn) {
                 step2NextBtn.addEventListener('click', () => {
-                    console.log('Step 2 next clicked');
                     showStep(3);
                 });
             }
 
-            // Step 3: Previous and Next buttons
             const step3PrevBtn = document.getElementById('step-3-prev');
             const step3NextBtn = document.getElementById('step-3-next');
             
             if (step3PrevBtn) {
                 step3PrevBtn.addEventListener('click', () => {
-                    console.log('Step 3 prev clicked');
                     showStep(2);
                 });
             }
             
             if (step3NextBtn) {
                 step3NextBtn.addEventListener('click', () => {
-                    console.log('Step 3 next clicked');
                     showStep(4);
                 });
             }
 
-            // Step 4: Previous and Next buttons
             const step4PrevBtn = document.getElementById('step-4-prev');
             const step4NextBtn = document.getElementById('step-4-next');
             
             if (step4PrevBtn) {
                 step4PrevBtn.addEventListener('click', () => {
-                    console.log('Step 4 prev clicked');
                     showStep(3);
                 });
             }
             
             if (step4NextBtn) {
                 step4NextBtn.addEventListener('click', () => {
-                    console.log('Step 4 next clicked');
                     showStep(5);
                 });
             }
 
-            // Step 5: Previous button
             const step5PrevBtn = document.getElementById('step-5-prev');
             if (step5PrevBtn) {
                 step5PrevBtn.addEventListener('click', () => {
-                    console.log('Step 5 prev clicked');
                     showStep(4);
                 });
             }
 
-            // Download QR code with enhanced mobile support
             const downloadQrBtn = document.getElementById('download-qr');
             if (downloadQrBtn) {
                 downloadQrBtn.addEventListener('click', async function() {
                     const downloadBtn = this;
                     const originalText = downloadBtn.innerHTML;
                     
-                    // Show loading state
                     downloadBtn.classList.add('loading');
                     downloadBtn.innerHTML = '<span style="margin-right: 8px;">⏳</span> Memuat turun...';
                     
                     try {
-                        // Get the QR code image
                         const qrImage = document.getElementById('qr-code-image');
                         const imageUrl = qrImage.src;
                         
-                        // Method 1: Try direct download first
                         if ('download' in document.createElement('a')) {
-                            // Fetch the image as a blob
                             const response = await fetch(imageUrl);
                             const blob = await response.blob();
                             
-                            // Create a blob URL
                             const blobUrl = URL.createObjectURL(blob);
                             
-                            // Create a temporary anchor element for download
                             const downloadLink = document.createElement('a');
                             downloadLink.href = blobUrl;
-                            downloadLink.download = 'qr.png'; // Set filename to "qr" with .png extension
+                            downloadLink.download = 'qr.png';
                             downloadLink.style.display = 'none';
                             
-                            // Append to body, click, and remove
                             document.body.appendChild(downloadLink);
                             downloadLink.click();
                             document.body.removeChild(downloadLink);
                             
-                            // Clean up the blob URL
                             setTimeout(() => {
                                 URL.revokeObjectURL(blobUrl);
                             }, 100);
@@ -851,9 +798,7 @@
                             showNotification('QR telah dimuat turun ke folder muat turun anda!', 'success');
                         }
                         
-                        // Method 2: For iOS devices or if direct download fails
                         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                            // Create shareable data URL for iOS
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             const img = new Image();
@@ -867,7 +812,6 @@
                                 canvas.toBlob(function(blob) {
                                     const file = new File([blob], 'qr.png', { type: 'image/png' });
                                     
-                                    // Try to use Web Share API if available
                                     if (navigator.share && navigator.canShare({ files: [file] })) {
                                         navigator.share({
                                             files: [file],
@@ -876,12 +820,10 @@
                                         }).then(() => {
                                             showNotification('QR dikongsi untuk disimpan!', 'success');
                                         }).catch(() => {
-                                            // Fallback to opening in new tab
                                             window.open(imageUrl, '_blank');
                                             showNotification('Sila simpan gambar dari tab baru', 'success');
                                         });
                                     } else {
-                                        // Fallback: open in new tab
                                         window.open(imageUrl, '_blank');
                                         showNotification('Untuk iOS: Tekan dan tahan gambar, kemudian pilih "Simpan Gambar"', 'success');
                                     }
@@ -894,20 +836,17 @@
                     } catch (error) {
                         console.error('Download error:', error);
                         
-                        // Fallback method: open image in new tab for manual download
                         const qrImage = document.getElementById('qr-code-image');
                         const newWindow = window.open(qrImage.src, '_blank');
                         
                         showNotification('Sila muat turun gambar dari tab baru yang dibuka', 'success');
                         
-                        // Auto-close the new window after 3 seconds
                         setTimeout(() => {
                             if (newWindow && !newWindow.closed) {
                                 newWindow.close();
                             }
                         }, 3000);
                     } finally {
-                        // Reset button state
                         setTimeout(() => {
                             downloadBtn.classList.remove('loading');
                             downloadBtn.innerHTML = originalText;
@@ -916,7 +855,6 @@
                 });
             }
 
-            // File input change handler
             const proofImageInput = document.getElementById('proof-image');
             if (proofImageInput) {
                 proofImageInput.addEventListener('change', function() {
@@ -931,7 +869,6 @@
                 });
             }
 
-            // Submit payment
             const submitPaymentBtn = document.getElementById('submit-payment');
             if (submitPaymentBtn) {
                 submitPaymentBtn.addEventListener('click', async function() {
@@ -942,7 +879,6 @@
                         return;
                     }
 
-                    // Check file size (limit to 5MB for mobile)
                     if (fileInput.files[0].size > 5 * 1024 * 1024) {
                         showNotification('Saiz gambar terlalu besar. Sila pilih gambar kurang dari 5MB.', 'error');
                         return;
@@ -950,7 +886,6 @@
 
                     showLoading();
 
-                    // Prepare Discord notification
                     const formData = new FormData();
                     formData.append("payload_json", JSON.stringify({
                         username: "PROSTREAM Payment Bot",
@@ -961,14 +896,22 @@
                     try {
                         const res = await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: formData });
                         if (res.ok) {
+                            // Track Purchase with Meta Pixel after successful Discord notification
+                            fbq('track', 'Purchase', {
+                                content_name: 'PROSTREAM 4 App Power Package',
+                                content_category: 'Streaming',
+                                content_ids: ['prostream_4app_package'],
+                                content_type: 'product',
+                                value: parseFloat(orderData.amount),
+                                currency: 'MYR'
+                            });
+                            
                             hideLoading();
                             showNotification('Bukti pembayaran telah dihantar! Kami akan menghubungi anda tidak lama lagi.', 'success');
                             
-                            // Clear local storage after successful payment
                             localStorage.removeItem('prostreamQRPaymentData');
                             localStorage.removeItem('prostreamQRPaymentStep');
                             
-                            // Redirect back to index after a delay
                             setTimeout(() => {
                                 window.location.href = 'index.html';
                             }, 3000);
@@ -984,7 +927,6 @@
                 });
             }
 
-            // Prevent closing the window before completing all steps
             window.addEventListener('beforeunload', function(e) {
                 if (currentStep < totalSteps) {
                     e.preventDefault();
@@ -993,19 +935,15 @@
                 }
             });
 
-            // Handle mobile back button
             window.addEventListener('popstate', function(event) {
                 if (currentStep > 1) {
                     showStep(currentStep - 1);
-                    // Prevent the default back action
                     window.history.pushState(null, null, window.location.pathname);
                 }
             });
 
-            // Initialize history state to handle back button
             window.history.pushState(null, null, window.location.pathname);
 
-            // Add touch feedback for buttons
             document.querySelectorAll('.btn, .download-btn').forEach(button => {
                 button.addEventListener('touchstart', function() {
                     this.style.opacity = '0.8';
@@ -1016,20 +954,16 @@
                 });
             });
 
-            // Optimize images for mobile
             document.querySelectorAll('img').forEach(img => {
                 img.loading = 'lazy';
             });
 
-            // Handle orientation changes
             window.addEventListener('orientationchange', function() {
-                // Small delay to allow the orientation change to complete
                 setTimeout(function() {
                     window.scrollTo(0, 0);
                 }, 200);
             });
 
-            // Restore the last step from local storage
             restoreLastStep();
         });
     </script>
