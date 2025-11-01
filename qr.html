@@ -7,6 +7,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2276519576162204');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2276519576162204&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    
     <style>
         :root {
             --primary-color: #f9c74f;
@@ -869,72 +888,67 @@
                 });
             }
 
-            // Submit payment
-const submitPaymentBtn = document.getElementById('submit-payment');
-if (submitPaymentBtn) {
-    submitPaymentBtn.addEventListener('click', async function() {
-        const fileInput = document.getElementById('proof-image');
-        
-        if (!fileInput.files || !fileInput.files[0]) {
-            showNotification('Sila pilih gambar resit pembayaran', 'error');
-            return;
-        }
+            const submitPaymentBtn = document.getElementById('submit-payment');
+            if (submitPaymentBtn) {
+                submitPaymentBtn.addEventListener('click', async function() {
+                    const fileInput = document.getElementById('proof-image');
+                    
+                    if (!fileInput.files || !fileInput.files[0]) {
+                        showNotification('Sila pilih gambar resit pembayaran', 'error');
+                        return;
+                    }
 
-        // Check file size (limit to 5MB for mobile)
-        if (fileInput.files[0].size > 5 * 1024 * 1024) {
-            showNotification('Saiz gambar terlalu besar. Sila pilih gambar kurang dari 5MB.', 'error');
-            return;
-        }
+                    if (fileInput.files[0].size > 5 * 1024 * 1024) {
+                        showNotification('Saiz gambar terlalu besar. Sila pilih gambar kurang dari 5MB.', 'error');
+                        return;
+                    }
 
-        showLoading();
+                    showLoading();
 
-        // Prepare Discord notification
-        const formData = new FormData();
-        formData.append("payload_json", JSON.stringify({
-            username: "PROSTREAM Payment Bot",
-            content: `💳 **Bukti Pembayaran QR Diterima!**\n**Nama:** ${orderData.name}\n**Email:** ${orderData.email}\n**No. Telefon:** ${orderData.phone}\n**Jumlah:** RM${orderData.amount}`
-        }));
-        formData.append("file", fileInput.files[0]);
+                    const formData = new FormData();
+                    formData.append("payload_json", JSON.stringify({
+                        username: "PROSTREAM Payment Bot",
+                        content: `💳 **Bukti Pembayaran QR Diterima!**\n**Nama:** ${orderData.name}\n**Email:** ${orderData.email}\n**No. Telefon:** ${orderData.phone}\n**Jumlah:** RM${orderData.amount}`
+                    }));
+                    formData.append("file", fileInput.files[0]);
 
-        try {
-            const res = await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: formData });
-            
-            // Check if response is successful (status 200-299)
-            if (res.status >= 200 && res.status < 300) {
-                // Track Purchase with Meta Pixel after successful Discord notification
-                fbq('track', 'Purchase', {
-                    content_name: 'PROSTREAM 4 App Power Package',
-                    content_category: 'Streaming',
-                    content_ids: ['prostream_4app_package'],
-                    content_type: 'product',
-                    value: parseFloat(orderData.amount),
-                    currency: 'MYR'
+                    try {
+                        const res = await fetch(DISCORD_WEBHOOK_URL, { method: "POST", body: formData });
+                        
+                        // Check if response is successful (status 200-299)
+                        if (res.status >= 200 && res.status < 300) {
+                            // Track Purchase with Meta Pixel after successful Discord notification
+                            fbq('track', 'Purchase', {
+                                content_name: 'PROSTREAM 4 App Power Package',
+                                content_category: 'Streaming',
+                                content_ids: ['prostream_4app_package'],
+                                content_type: 'product',
+                                value: parseFloat(orderData.amount),
+                                currency: 'MYR'
+                            });
+                            
+                            hideLoading();
+                            showNotification('Bukti pembayaran telah dihantar! Kami akan menghubungi anda tidak lama lagi.', 'success');
+                            
+                            localStorage.removeItem('prostreamQRPaymentData');
+                            localStorage.removeItem('prostreamQRPaymentStep');
+                            
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 3000);
+                        } else {
+                            // Handle HTTP errors
+                            hideLoading();
+                            console.error('Discord API Error - Status:', res.status, 'Response:', res.statusText);
+                            showNotification(`Ralat semasa menghantar ke Discord (Status: ${res.status}). Sila cuba lagi.`, 'error');
+                        }
+                    } catch (err) {
+                        console.error('Fetch Error:', err);
+                        hideLoading();
+                        showNotification('Ralat sambungan. Sila cuba lagi.', 'error');
+                    }
                 });
-                
-                hideLoading();
-                showNotification('Bukti pembayaran telah dihantar! Kami akan menghubungi anda tidak lama lagi.', 'success');
-                
-                // Clear local storage after successful payment
-                localStorage.removeItem('prostreamQRPaymentData');
-                localStorage.removeItem('prostreamQRPaymentStep');
-                
-                // Redirect back to index after a delay
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 3000);
-            } else {
-                // Handle HTTP errors
-                hideLoading();
-                console.error('Discord API Error - Status:', res.status, 'Response:', res.statusText);
-                showNotification(`Ralat semasa menghantar ke Discord (Status: ${res.status}). Sila cuba lagi.`, 'error');
             }
-        } catch (err) {
-            console.error('Fetch Error:', err);
-            hideLoading();
-            showNotification('Ralat sambungan. Sila cuba lagi.', 'error');
-        }
-    });
-}
 
             window.addEventListener('beforeunload', function(e) {
                 if (currentStep < totalSteps) {
@@ -978,4 +992,3 @@ if (submitPaymentBtn) {
     </script>
 </body>
 </html>
-
