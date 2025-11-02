@@ -26,6 +26,17 @@ export default async function handler(req, res) {
         const billPaymentChannel = '0';
         const billChargeToCustomer = '1';
 
+        // Create expiry date in UTC to avoid timezone issues
+        const expiryDate = new Date();
+        expiryDate.setUTCDate(expiryDate.getUTCDate() + 3);
+        const formattedExpiryDate = 
+            `${expiryDate.getUTCDate().toString().padStart(2, '0')}-` +
+            `${(expiryDate.getUTCMonth() + 1).toString().padStart(2, '0')}-` +
+            `${expiryDate.getUTCFullYear()} ` +
+            `${expiryDate.getUTCHours().toString().padStart(2, '0')}:` +
+            `${expiryDate.getUTCMinutes().toString().padStart(2, '0')}:` +
+            `${expiryDate.getUTCSeconds().toString().padStart(2, '0')}`;
+
         // Create the form data for ToyyibPay
         const body = new FormData();
         body.append('userSecretKey', userSecretKey);
@@ -44,6 +55,7 @@ export default async function handler(req, res) {
         body.append('billSplitPayment', billSplitPayment);
         body.append('billPaymentChannel', billPaymentChannel);
         body.append('billChargeToCustomer', billChargeToCustomer);
+        body.append('billExpiryDate', formattedExpiryDate);
 
         // Make the API call to ToyyibPay from the server
         const response = await fetch('https://toyyibpay.com/index.php/api/createBill', {
