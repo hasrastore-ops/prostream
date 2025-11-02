@@ -45,21 +45,8 @@ export default async function handler(req, res) {
         const billReturnUrl = 'https://prostream-rho.vercel.app/payment-successful.html';
         const billCallbackUrl = 'https://prostream-rho.vercel.app/api/payment-callback';
         
-        // Create bill reference number with timestamp (using UTC time)
-        const billExternalReferenceNo = `PS${now.getTime()}`;
-        
-        // Create expiry date in UTC to avoid timezone issues
-        const expiryDate = new Date();
-        expiryDate.setUTCDate(expiryDate.getUTCDate() + 3);
-        const formattedExpiryDate = 
-            `${expiryDate.getUTCDate().toString().padStart(2, '0')}-` +
-            `${(expiryDate.getUTCMonth() + 1).toString().padStart(2, '0')}-` +
-            `${expiryDate.getUTCFullYear()} ` +
-            `${expiryDate.getUTCHours().toString().padStart(2, '0')}:` +
-            `${expiryDate.getUTCMinutes().toString().padStart(2, '0')}:` +
-            `${expiryDate.getUTCSeconds().toString().padStart(2, '0')}`;
-        
-        console.log('Expiry Date (UTC):', formattedExpiryDate);
+       
+        const billExternalReferenceNo
         
         const billTo = name;
         const billEmail = email;
@@ -87,7 +74,7 @@ export default async function handler(req, res) {
         body.append('billSplitPaymentArgs', '');
         body.append('billPaymentChannel', billPaymentChannel);
         body.append('billChargeToCustomer', billChargeToCustomer);
-        body.append('billExpiryDate', formattedExpiryDate);
+   
 
         // Log the data being sent (without the secret key)
         const logData = {};
