@@ -1,10 +1,5 @@
 // File: /api/create-bill.js
 
-/**
- * Serverless function to create ToyyibPay bills
- * This function handles the payment creation process securely on the server side
- */
-
 export default async function handler(req, res) {
     // Only allow POST requests
     if (req.method !== 'POST') {
@@ -20,8 +15,6 @@ export default async function handler(req, res) {
         console.log('=== Payment Request Started ===');
         console.log('Server Local Time:', now.toString());
         console.log('Server UTC Time:', now.toUTCString());
-        console.log('Server ISO Time:', now.toISOString());
-        console.log('Malaysia Time (GMT+8):', new Date(now.getTime() + 8 * 60 * 60 * 1000).toString());
         console.log('Request Body:', JSON.stringify(req.body, null, 2));
 
         // Get data from the frontend request
@@ -45,8 +38,11 @@ export default async function handler(req, res) {
         const billReturnUrl = 'https://prostream-rho.vercel.app/payment-successful.html';
         const billCallbackUrl = 'https://prostream-rho.vercel.app/api/payment-callback';
         
-       
-        const billExternalReferenceNo
+        // Create bill reference number with timestamp (using UTC time)
+        const billExternalReferenceNo = `PS${now.getTime()}`;
+        
+        // REMOVED: Expiry date handling - letting ToyyibPay handle it automatically
+        // This avoids the timezone issue completely
         
         const billTo = name;
         const billEmail = email;
@@ -74,7 +70,9 @@ export default async function handler(req, res) {
         body.append('billSplitPaymentArgs', '');
         body.append('billPaymentChannel', billPaymentChannel);
         body.append('billChargeToCustomer', billChargeToCustomer);
-   
+        
+        // REMOVED: billExpiryDate parameter
+        // ToyyibPay will use their default expiry time
 
         // Log the data being sent (without the secret key)
         const logData = {};
@@ -95,7 +93,6 @@ export default async function handler(req, res) {
         });
 
         console.log('ToyyibPay Response Status:', response.status);
-        console.log('ToyyibPay Response Headers:', Object.fromEntries(response.headers.entries()));
 
         const textResult = await response.text();
         console.log('ToyyibPay Raw Response:', textResult);
