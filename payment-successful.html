@@ -7,60 +7,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
-    
-    <!-- TikTok Pixel Code Start -->
-    <script>
-    !function (w, d, t) {
-      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
-
-      ttq.load('D3LMA63C77U816ERRPPG');
-      ttq.page();
-    }(window, document, 'ttq');
-
-    // --- GLOBAL TIKTOK TRACKING FUNCTIONS ---
-    // These functions are now in the global scope and can be called from anywhere.
-
-    function trackPurchase(amount) {
-      console.log('TikTok: Firing Purchase event with amount:', amount);
-      ttq.track('Purchase', {
-        "contents": [
-          {
-            "content_id": "prostream_4app_package",
-            "content_type": "product",
-            "content_name": "PROSTREAM 4 App Power Package"
-          }
-        ],
-        "value": amount,
-        "currency": "MYR"
-      });
-    }
-    
-    // SHA-256 hashing function for PII data
-    async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
-    
-    // Function to identify user with hashed PII
-    async function identifyUser(email, phone) {
-      console.log('TikTok: Identifying user with PII');
-      const hashedEmail = await sha256(email.toLowerCase());
-      const hashedPhone = await sha256(phone);
-      
-      ttq.identify({
-        "email": hashedEmail,
-        "phone_number": hashedPhone,
-        "external_id": await sha256(email) // Using email as external ID
-      });
-    }
-    </script>
-    <!-- TikTok Pixel Code End -->
+    <!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2276519576162204');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2276519576162204&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
     
     <style>
         :root {
@@ -344,7 +308,7 @@
                 <div class="highlight-box">
                     <h3>🎉 PENTING: Panduan Pemasangan</h3>
                     <p>Sila ikuti panduan pemasangan yang telah kami sediakan untuk memasang semua aplikasi PROSTREAM pada peranti Android TV anda.</p>
-                    <a href="https://shorturl.at/0ptzo" target="_blank" class="btn">Lihat Panduan Pemasangan</a>
+                    <a href="https://tinyurl.com/PROSTREAMX" target="_blank" class="btn">Lihat Panduan Pemasangan</a>
                 </div>
                 
                 <div class="order-details" id="orderDetails">
@@ -378,7 +342,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="https://prostream-rho.vercel.app/" class="btn">Kembali ke Laman Utama</a>
+                    <a href="https://prostreamfb.vercel.app/" class="btn">Kembali ke Laman Utama</a>
                     <a href="https://wa.me/601127412402?text=Hai%2C%20saya%20baru%20sahaja%20membeli%20pakej%20PROSTREAM%20dan%20perlu%20bantuan." target="_blank" class="btn whatsapp-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
@@ -420,7 +384,7 @@
                 const timestamp = new Date().toISOString();
                 
                 const embed = {
-                    title: "✅ PEMBAYARAN BERJAYA - PROSTREAM",
+                    title: "✅ PEMBAYARAN BERJAYA - PROSTREAM-FB",
                     description: "Pelanggan telah berjaya membuat pembayaran!",
                     color: 0x43b581,
                     fields: [
@@ -484,15 +448,68 @@
             }, 3000);
         }
 
+        // Function to verify payment status with ToyyibPay
+        async function verifyPaymentStatus(billCode) {
+            try {
+                const response = await fetch(`https://toyyibpay.com/index.php/api/getBillTransactions?billCode=${billCode}`);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const transaction = data[0];
+                    return transaction.billpaymentStatus === '1'; // 1 = successful
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('Error verifying payment status:', error);
+                return false;
+            }
+        }
+
         // Function to load order details
         async function loadOrderDetails() {
             console.log('🔄 Loading order details...');
             try {
-                const pendingOrder = localStorage.getItem('pendingOrder');
-                console.log('Retrieved pendingOrder from localStorage:', pendingOrder);
+                // Try to get data from localStorage first
+                let pendingOrder = localStorage.getItem('pendingOrder');
+                
+                // If not available, try to get from URL parameters
+                if (!pendingOrder) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const billCode = urlParams.get('billcode');
+                    const order_id = urlParams.get('order_id');
+                    
+                    if (billCode) {
+                        console.log('No localStorage data, checking URL parameters:', { billCode, order_id });
+                        
+                        // Verify payment status first
+                        const isPaymentValid = await verifyPaymentStatus(billCode);
+                        if (!isPaymentValid) {
+                            console.error('❌ Payment verification failed');
+                            showOrderDetailsError();
+                            return;
+                        }
+                        
+                        // Create a basic order object from URL parameters
+                        pendingOrder = JSON.stringify({
+                            billNo: billCode,
+                            orderData: {
+                                customerName: 'Pelanggan',
+                                customerEmail: 'email@example.com',
+                                customerPhone: '0123456789',
+                                product: 'PROSTREAM 4 App Power Package',
+                                total: 29.90
+                            },
+                            totalAmount: 29.90,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                }
+                
+                console.log('Retrieved pendingOrder from localStorage/URL:', pendingOrder);
 
                 if (!pendingOrder) {
-                    console.error('❌ No pending order found in localStorage.');
+                    console.error('❌ No pending order found in localStorage or URL.');
                     showOrderDetailsError();
                     return;
                 }
@@ -502,16 +519,21 @@
                 
                 displayOrderDetails(orderData);
                 
-                // Identify user with hashed PII
-                console.log('Identifying user for TikTok...');
-                await identifyUser(orderData.orderData.customerEmail, orderData.orderData.customerPhone);
+                // Track Purchase with Meta Pixel - ENSURE THIS IS CALLED
+                console.log('🎯 Firing Meta Purchase event...');
+                fbq('track', 'Purchase', {
+                    content_name: 'PROSTREAM 4 App Power Package',
+                    content_category: 'Streaming',
+                    content_ids: ['prostream_4app_package'],
+                    content_type: 'product',
+                    value: orderData.totalAmount || orderData.orderData.total,
+                    currency: 'MYR'
+                });
                 
-                // Track Purchase
-                console.log('Firing TikTok Purchase event...');
-                trackPurchase(orderData.totalAmount);
+                console.log('✅ Meta Purchase event fired successfully');
                 
                 // Send Discord notification for successful payment
-                console.log('Sending Discord notification...');
+                console.log('📧 Sending Discord notification...');
                 await sendDiscordNotification(orderData.orderData);
                 
                 // Clear the pending order from localStorage
@@ -531,28 +553,34 @@
                 <h3>Butiran Pesanan</h3>
                 <div class="detail-row">
                     <span>No. Pesanan:</span>
-                    <span>${orderData.billNo}</span>
+                    <span>${orderData.billNo || 'N/A'}</span>
                 </div>
                 <div class="detail-row">
                     <span>Nama:</span>
-                    <span>${orderData.orderData.customerName}</span>
+                    <span>${orderData.orderData.customerName || 'N/A'}</span>
                 </div>
                 <div class="detail-row">
                     <span>Emel:</span>
-                    <span>${orderData.orderData.customerEmail}</span>
+                    <span>${orderData.orderData.customerEmail || 'N/A'}</span>
                 </div>
                 <div class="detail-row">
                     <span>No. Telefon:</span>
-                    <span>${orderData.orderData.customerPhone}</span>
+                    <span>${orderData.orderData.customerPhone || 'N/A'}</span>
                 </div>
                 <div class="detail-row">
                     <span>Produk:</span>
-                    <span>${orderData.orderData.product}</span>
+                    <span>${orderData.orderData.product || 'N/A'}</span>
                 </div>
                 <div class="detail-row">
                     <span>Jumlah:</span>
-                    <span>RM ${orderData.totalAmount.toFixed(2)}</span>
+                    <span>RM ${(orderData.totalAmount || orderData.orderData.total || 0).toFixed(2)}</span>
                 </div>
+                ${orderData.timestamp ? `
+                <div class="detail-row">
+                    <span>Tarikh:</span>
+                    <span>${new Date(orderData.timestamp).toLocaleString('ms-MY')}</span>
+                </div>
+                ` : ''}
             `;
         }
 
@@ -572,4 +600,3 @@
     </script>
 </body>
 </html>
-
