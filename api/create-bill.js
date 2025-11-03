@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 const TOYYIB_API_KEY = 'b2kcp05o-b5m0-q000-55i7-w3j57riufv7h';
 const CATEGORY_CODE = '8f5ynfpt';
 const BILL_NAME = 'PROSTREAM';
-const SITE_URL = 'https://prostreamfb.vercel.app';
+const SITE_URL = 'https://prostream-rho.vercel.app';
 
 // ==============================
 // ✅ MAIN HANDLER
