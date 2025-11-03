@@ -1,147 +1,117 @@
-// File: /api/create-bill.js
+// create-bill.js
+import fetch from 'node-fetch';
 
+// ==============================
+// ✅ CONFIGURATION
+// ==============================
+const TOYYIB_API_KEY = 'b2kcp05o-b5m0-q000-55i7-w3j57riufv7h';
+const CATEGORY_CODE = '8f5ynfpt';
+const BILL_NAME = 'PROSTREAM';
+const SITE_URL = 'https://prostreamfb.vercel.app';
+
+// ==============================
+// ✅ MAIN HANDLER
+// ==============================
 export default async function handler(req, res) {
-    // Only allow POST requests
-    if (req.method !== 'POST') {
-        return res.status(405).json({ 
-            success: false, 
-            error: 'Method Not Allowed' 
-        });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, message: 'Method Not Allowed' });
+  }
+
+  try {
+    const { name, email, phone, totalAmount, orderData } = req.body;
+
+    if (!name || !email || !phone || !totalAmount) {
+      return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
 
-    try {
-        // Get current time for debugging
-        const now = new Date();
-        console.log('=== Payment Request Started ===');
-        console.log('Server Local Time:', now.toString());
-        console.log('Server UTC Time:', now.toUTCString());
-        console.log('Request Body:', JSON.stringify(req.body, null, 2));
+    // Current timestamp (UTC)
+    const now = new Date();
+    const billExternalReferenceNo = `PS${now.getTime()}`;
 
-        // Get data from the frontend request
-        const { name, email, phone, amount, billDescription } = req.body;
+    // Expiry date 3 days later in Malaysia timezone
+    const expiryMs = Date.now() + 3 * 24 * 60 * 60 * 1000;
+    const expiryDate = new Date(expiryMs);
 
-        // Validate required fields
-        if (!name || !email || !phone || !amount) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Missing required fields: name, email, phone, amount' 
-            });
-        }
+    const opts = {
+      timeZone: 'Asia/Kuala_Lumpur',
+      hour12: false,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
 
-        // Your SECRET data is now safe on the server
-        const userSecretKey = 'b2kcp05o-b5m0-q000-55i7-w3j57riufv7h';
-        const categoryCode = '8f5ynfpt';
-        const billName = 'PROSTREAM';
-        const billPriceSetting = '1';
-        const billPayorInfo = '1';
-        const billAmount = `${amount * 100}`; // Convert to cents
-        const billReturnUrl = 'https://prostream-rho.vercel.app/payment-successful.html';
-        const billCallbackUrl = 'https://prostream-rho.vercel.app/api/payment-callback';
-        
-        // Create bill reference number with timestamp (using UTC time)
-        const billExternalReferenceNo = `PS${now.getTime()}`;
-        
-        // REMOVED: Expiry date handling - letting ToyyibPay handle it automatically
-        // This avoids the timezone issue completely
-        
-        const billTo = name;
-        const billEmail = email;
-        const billPhone = phone;
-        const billSplitPayment = '0';
-        const billPaymentChannel = '0';
-        const billChargeToCustomer = '1';
+    const parts = new Intl.DateTimeFormat('en-GB', opts).formatToParts(expiryDate);
+    const dd = parts.find(p => p.type === 'day').value;
+    const mm = parts.find(p => p.type === 'month').value;
+    const yyyy = parts.find(p => p.type === 'year').value;
+    const hh = parts.find(p => p.type === 'hour').value;
+    const min = parts.find(p => p.type === 'minute').value;
+    const sec = parts.find(p => p.type === 'second').value;
+    const formattedExpiryDate = `${dd}-${mm}-${yyyy} ${hh}:${min}:${sec}`;
 
-        // Create the form data for ToyyibPay
-        const body = new FormData();
-        body.append('userSecretKey', userSecretKey);
-        body.append('categoryCode', categoryCode);
-        body.append('billName', billName);
-        body.append('billDescription', billDescription || `Pembelian PROSTREAM Package - RM${amount}`);
-        body.append('billPriceSetting', billPriceSetting);
-        body.append('billPayorInfo', billPayorInfo);
-        body.append('billAmount', billAmount);
-        body.append('billReturnUrl', billReturnUrl);
-        body.append('billCallbackUrl', billCallbackUrl);
-        body.append('billExternalReferenceNo', billExternalReferenceNo);
-        body.append('billTo', billTo);
-        body.append('billEmail', billEmail);
-        body.append('billPhone', billPhone);
-        body.append('billSplitPayment', billSplitPayment);
-        body.append('billSplitPaymentArgs', '');
-        body.append('billPaymentChannel', billPaymentChannel);
-        body.append('billChargeToCustomer', billChargeToCustomer);
-        
-        // REMOVED: billExpiryDate parameter
-        // ToyyibPay will use their default expiry time
+    // Return / Callback URLs (must match your domain)
+    const billReturnUrl = `${SITE_URL}/payment-successful.html`;
+    const billCallbackUrl = `${SITE_URL}/api/payment-callback`;
 
-        // Log the data being sent (without the secret key)
-        const logData = {};
-        for (let [key, value] of body.entries()) {
-            if (key !== 'userSecretKey') {
-                logData[key] = value;
-            } else {
-                logData[key] = '***HIDDEN***';
-            }
-        }
-        console.log('Data being sent to ToyyibPay:', JSON.stringify(logData, null, 2));
+    // Amount in sen (ToyyibPay requires *100)
+    const billAmount = String(Math.round(Number(totalAmount) * 100));
 
-        // Make the API call to ToyyibPay from the server
-        console.log('Making API call to ToyyibPay...');
-        const response = await fetch('https://toyyibpay.com/index.php/api/createBill', {
-            method: 'POST',
-            body: body,
-        });
+    // ==============================
+    // ✅ BUILD BILL PAYLOAD
+    // ==============================
+    const body = new URLSearchParams({
+      userSecretKey: TOYYIB_API_KEY,
+      categoryCode: CATEGORY_CODE,
+      billName: BILL_NAME,
+      billDescription: 'ProStream Subscription Order',
+      billPriceSetting: '1',
+      billPayorInfo: '1',
+      billAmount,
+      billReturnUrl,
+      billCallbackUrl,
+      billExternalReferenceNo,
+      billTo: name,
+      billEmail: email,
+      billPhone: phone,
+      billSplitPayment: '0',
+      billSplitPaymentArgs: '',
+      billPaymentChannel: '0',
+      billContentEmail: 'Thank you for purchasing ProStream package!',
+      billChargeToCustomer: '',
+      billExpiryDate: formattedExpiryDate
+    });
 
-        console.log('ToyyibPay Response Status:', response.status);
+    // ==============================
+    // ✅ CALL TOYYIBPAY API
+    // ==============================
+    const result = await fetch('https://toyyibpay.com/index.php/api/createBill', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
 
-        const textResult = await response.text();
-        console.log('ToyyibPay Raw Response:', textResult);
+    const data = await result.json();
+    console.log('🧾 ToyyibPay response:', data);
 
-        let result;
-        try {
-            result = JSON.parse(textResult);
-            console.log('Parsed ToyyibPay Response:', JSON.stringify(result, null, 2));
-        } catch (e) {
-            console.error("Failed to parse ToyyibPay response:", e);
-            console.error("Raw response that failed to parse:", textResult);
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Invalid response from payment provider.',
-                details: textResult
-            });
-        }
+    if (Array.isArray(data) && data[0]?.BillCode) {
+      const billCode = data[0].BillCode;
 
-        // Check if the bill was created successfully
-        if (result && result.length > 0 && result[0].BillCode) {
-            const billCode = result[0].BillCode;
-            const billUrl = `https://toyyibpay.com/${billCode}`;
-
-            console.log('Bill created successfully!');
-            console.log('Bill Code:', billCode);
-            console.log('Bill URL:', billUrl);
-
-            // Send the successful response back to the frontend
-            return res.status(200).json({ 
-                success: true, 
-                billCode: billCode,
-                billUrl: billUrl,
-                billExternalReferenceNo: billExternalReferenceNo
-            });
-        } else {
-            console.error("ToyyibPay API Error:", result);
-            return res.status(400).json({ 
-                success: false, 
-                error: 'Failed to create payment bill.',
-                details: result
-            });
-        }
-    } catch (error) {
-        console.error('Server Error:', error);
-        console.error('Error Stack:', error.stack);
-        return res.status(500).json({ 
-            success: false, 
-            error: 'An internal server error occurred.',
-            details: error.message
-        });
+      // Return JSON response to frontend
+      return res.status(200).json({
+        success: true,
+        billCode,
+        billUrl: `https://toyyibpay.com/${billCode}`,
+        billExternalReferenceNo,
+        expiry: formattedExpiryDate
+      });
     }
+
+    throw new Error(`ToyyibPay failed: ${JSON.stringify(data)}`);
+  } catch (err) {
+    console.error('❌ Error creating bill:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
 }
